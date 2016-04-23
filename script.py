@@ -17,13 +17,13 @@ from subprocess import check_output
 
 # In[ ]:
 
-TourneySeeds = pd.read_csv('../input/TourneySeeds.csv')
-SampleSubmission = pd.read_csv('../input/SampleSubmission.csv')
-Seasons = pd.read_csv('../input/Seasons.csv')
-Teams = pd.read_csv('../input/Teams.csv')
-TourneySlots = pd.read_csv('../input/TourneySlots.csv')
-TourneyDetailedResults = pd.read_csv('../input/TourneyDetailedResults.csv')
-TourneyCompactResults = pd.read_csv('../input/TourneyCompactResults.csv')
+TourneySeeds = pd.read_csv('data/TourneySeeds.csv')
+SampleSubmission = pd.read_csv('data/SampleSubmission.csv')
+Seasons = pd.read_csv('data/Seasons.csv')
+Teams = pd.read_csv('data/Teams.csv')
+TourneySlots = pd.read_csv('data/TourneySlots.csv')
+TourneyDetailedResults = pd.read_csv('data/TourneyDetailedResults.csv')
+TourneyCompactResults = pd.read_csv('data/TourneyCompactResults.csv')
 team_dict = dict(zip(Teams['Team_Id'].values, Teams['Team_Name'].values))
 TourneyDetailedResults['Wteam_name'] = TourneyDetailedResults['Wteam'].map(team_dict)
 TourneyDetailedResults['Lteam_name'] = TourneyDetailedResults['Lteam'].map(team_dict)
