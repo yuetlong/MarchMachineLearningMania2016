@@ -9,7 +9,7 @@ combined = pd.concat(frames)
 combined = combined[combined.Season >= 2012]
 combined = combined[combined.Season <= 2015]
 
-combined = combined.drop(['Daynum', 'Wloc', 'Numot'], 1)
+combined = combined.drop(['Daynum', 'Wloc', 'Numot', 'Wteam', 'Lteam', 'Season'], 1)
 combined['score'] = combined.Wscore - combined.Lscore
 combined['fgm'] = combined.Wfgm - combined.Lfgm
 combined['fga'] = combined.Wfga - combined.Lfga
