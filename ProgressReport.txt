@@ -1,4 +1,0 @@
-After a cursory look at the massive amount of data provided, we consulted Kaggle users themselves for some idea of where
-even to begin on this giant problem. However, all other students are using R, Python, and SQL, which makes it difficult
-to use them as a reference place for where to start. 
-Because we are starting off with a simple logistic regression, that 
