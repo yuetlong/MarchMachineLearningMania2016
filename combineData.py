@@ -25,8 +25,11 @@ combined['blk'] = combined.Wblk - combined.Lblk
 combined['pf'] = combined.Wpf - combined.Lpf
 
 numWins = {}
+numLosses = {}
+
 for i in range(1101, 1465):
   numWins[i] = combined[combined.Wteam == i].Wteam.count()
+  numLosses[i] = combined[combined.Lteam == i].Lteam.count()
 
 home = combined[combined.Wloc == 'H']
 home['Wloc'] = 1
