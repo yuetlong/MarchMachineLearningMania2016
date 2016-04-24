@@ -2,6 +2,7 @@ import pandas as pd
 
 tourney = pd.read_csv('data/TourneyDetailedResults.csv')
 regularSeason = pd.read_csv('data/RegularSeasonDetailedResults.csv')
+teams = pd.read_csv('data/Teams.csv')
 
 frames = [tourney, regularSeason]
 combined = pd.concat(frames)
@@ -24,13 +25,6 @@ combined['stl'] = combined.Wstl - combined.Lstl
 combined['blk'] = combined.Wblk - combined.Lblk
 combined['pf'] = combined.Wpf - combined.Lpf
 
-numWins = {}
-numLosses = {}
-
-for i in range(1101, 1465):
-  numWins[i] = combined[combined.Wteam == i].Wteam.count()
-  numLosses[i] = combined[combined.Lteam == i].Lteam.count()
-
 home = combined[combined.Wloc == 'H']
 home['Wloc'] = 1
 neutral = combined[combined.Wloc == 'N']
@@ -40,6 +34,20 @@ away['Wloc'] = 0
 courts = [home, neutral, away]
 combined = pd.concat(courts)
 
+numWins = {}
+possWins = {}
+numLosses = {}
+
+for i in range(1101, 1465):
+  numWins[i] = 0
+  numLosses[i] = 0
+  numWins[i] += combined[combined.Wteam == i and combined.Wloc == 1].Wteam.count() * .6
+  numWins[i] += combined[combined.Wteam == i and combined.Wloc == 0].Wteam.count() * 1.4
+  numWins[i] += combined[combined.Wteam == i and combined.Wloc == .5].Wteam.count() * 1
+  numLosses[i] += combined[combined.Lteam == i and combined.Wloc == 1].Lteam.count() * .6
+  numLosses[i] += combined[combined.Lteam == i and combined.Wloc == 0].Lteam.count() * 1.6
+  numLosses[i] += combined[combined.Lteam == i and combined.Wloc == .5].Lteam.count() * 1
+  
 combined = combined.drop(['Daynum', 'Numot', 'Wteam', 'Lteam', 'Season', 'Wscore', 'Lscore', 'Wfgm', 'Lfgm', 'Wfga', 'Lfga', 'Wfgm3', 'Lfgm3', 'Wfga3', 'Lfga3', 'Wftm', 'Lftm', 'Wfta', 'Lfta', 'Wor', 'Lor', 'Wdr', 'Ldr', 'Wast', 'Last', 'Wto', 'Lto', 'Wstl', 'Lstl', 'Wblk', 'Lblk', 'Wpf', 'Lpf'], 1)
 
 combined.to_csv('combinedData.csv', index=False)
