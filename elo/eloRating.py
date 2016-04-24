@@ -7,9 +7,10 @@ teams = pd.read_csv('../data/Teams.csv');
 sample = pd.read_csv('../data/SampleSubmission.csv')
 
 # Initialize Elo Variables
-homeAdvantage = 100; 
-k = 24; 
-year = 1985;  
+homeAdvantage = 100
+k = 24
+cval = 200
+year = 1985  
 ratings = {}
 for t in range(0, len(teams.index)): 
 	ratings[teams.Team_Id[t]] = 1500	
@@ -24,11 +25,11 @@ for index, row in data.iterrows():
 	Ra = ratings[data.Wteam[index]]
 	Rb = ratings[data.Lteam[index]]
 	if data.Wloc[index] == 'A': 
-		Rb += 100
+		Rb += homeAdvantage
 	elif data.Wloc[index] == 'H': 
-		Ra += 100
-	Ea = 1/(1+(10**((Rb-Ra)/200))) 
-	Eb = 1/(1+(10**((Ra-Rb)/200))) 
+		Ra += homeAdvantage
+	Ea = 1/(1+(10**((Rb-Ra)/cval))) 
+	Eb = 1/(1+(10**((Ra-Rb)/cval))) 
 	ratings[data.Wteam[index]] = Ra + k*(1-Ea)
 	ratings[data.Lteam[index]] = Rb + k*(0-Eb)
 
@@ -40,6 +41,6 @@ games['team2'] = pd.to_numeric(games['team2'])
 games['Pred'] = 0
 for i in range(0,len(games.index)): 
 	m = ratings[games.team2[i]] - ratings[games.team1[i]]
-	games.ix[i,'Pred'] = 1/(1+(10**(m/200)))
+	games.ix[i,'Pred'] = 1/(1+(10**(m/cval)))
 
 games[['Id','Pred']].to_csv('eloResults.csv',index=False)
