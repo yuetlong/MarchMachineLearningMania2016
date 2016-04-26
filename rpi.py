@@ -176,5 +176,8 @@ setTeamALoss['BOWP'] = setTeamALoss['teamB'].map(OWP)
 setTeamALoss['BOOWP'] = setTeamALoss['teamB'].map(OOWP)
 
 full_set = pd.concat([setTeamAWin, setTeamALoss], ignore_index=True)
+full_set['WPDiff'] = full_set['AWP'] - full_set['BWP']
+full_set['OWPDiff'] = full_set['AOWP'] - full_set['BOWP']
+full_set['OOWPDiff'] = full_set['AOOWP'] - full_set['BOOWP']
 
 full_set.to_csv('2015-reg-season-data.csv', index=False)
