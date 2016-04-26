@@ -13,7 +13,7 @@ results = results.drop(['Daynum', 'Wscore','Lscore','Wloc','Numot'])
 results['Pred'] = 0
 
 for i in range(0, len(preds.index)): 
-	if results.Wteam[i] == preds.Wteam[i] && results.Lteam[i] == preds.Lteam[i]: 
+	if results.Wteam[i] == preds.Wteam[i] and results.Lteam[i] == preds.Lteam[i]: 
 		results.Pred[i] = 1
 	else: 
 		results.Pred[i] = 0
