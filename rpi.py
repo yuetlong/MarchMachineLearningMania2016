@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import pandas as pd
+from random import random
 
 regularSeason = pd.read_csv('data/RegularSeasonDetailedResults.csv')
+teams = pd.read_csv('data/Teams.csv')
 
 winningPoints = {}
 possibleWinningPoints = {}
@@ -24,6 +26,8 @@ for i in range(1101, 1465):
     for j in range(1101,1465):
         otherTeamsPossibleWinningPoints[i][j] = 0
         otherTeamsWinningPoints[i][j] = 0
+
+regularSeason = regularSeason[regularSeason.Season == 2015]
 
 for _, row in regularSeason.iterrows():
     winLoc   = row["Wloc"]
@@ -107,6 +111,70 @@ for teamInQuestion in opponents:
     else:
         OOWP[teamInQuestion] = 0
     assert 1 >= OOWP[teamInQuestion] >= 0
+    
+teams["WP"] = 0
+teams["OWP"] = 0
+teams["OOWP"] = 0
 
-for i in range(1101, 1465):
-    print(WP[i],OWP[i],OOWP[i])
+teams['WP'] = teams['Team_Id'].map(WP)
+teams['OWP'] = teams['Team_Id'].map(OWP)
+teams['OOWP'] = teams['Team_Id'].map(OOWP)
+    
+teams.to_csv('teams_with_rpi.csv', index=False)
+
+setTeamAWin = pd.DataFrame(columns=list(regularSeason.columns.values))
+setTeamALoss = pd.DataFrame(columns=list(regularSeason.columns.values))
+
+for i in range(0, len(regularSeason.index)):
+    if random() < .5:
+        setTeamAWin = pd.concat([setTeamAWin, regularSeason.iloc[[i]]])     
+    else:
+        setTeamALoss = pd.concat([setTeamALoss, regularSeason.iloc[[i]]])
+
+setTeamAWin = setTeamAWin.rename(columns = {
+    'Wteam':'teamA',
+    'Lteam':'teamB'
+})
+setTeamAWin['teamAWin'] = 1
+
+setTeamAWin['AWP'] = 0
+setTeamAWin['AOWP'] = 0
+setTeamAWin['AOOWP'] = 0
+
+setTeamAWin['BWP'] = 0
+setTeamAWin['BOWP'] = 0
+setTeamAWin['BOOWP'] = 0
+
+setTeamAWin['AWP'] = setTeamAWin['teamA'].map(WP)
+setTeamAWin['AOWP'] = setTeamAWin['teamA'].map(OWP)
+setTeamAWin['AOOWP'] = setTeamAWin['teamA'].map(OOWP)
+
+setTeamAWin['BWP'] = setTeamAWin['teamB'].map(WP)
+setTeamAWin['BOWP'] = setTeamAWin['teamB'].map(OWP)
+setTeamAWin['BOOWP'] = setTeamAWin['teamB'].map(OOWP)
+
+setTeamALoss = setTeamALoss.rename(columns = {
+    'Wteam':'teamB',
+    'Lteam':'teamA'
+})
+setTeamALoss['teamAWin'] = 0
+
+setTeamALoss['AWP'] = 0
+setTeamALoss['AOWP'] = 0
+setTeamALoss['AOOWP'] = 0
+
+setTeamALoss['BWP'] = 0
+setTeamALoss['BOWP'] = 0
+setTeamALoss['BOOWP'] = 0
+
+setTeamALoss['AWP'] = setTeamALoss['teamA'].map(WP)
+setTeamALoss['AOWP'] = setTeamALoss['teamA'].map(OWP)
+setTeamALoss['AOOWP'] = setTeamALoss['teamA'].map(OOWP)
+
+setTeamALoss['BWP'] = setTeamALoss['teamB'].map(WP)
+setTeamALoss['BOWP'] = setTeamALoss['teamB'].map(OWP)
+setTeamALoss['BOOWP'] = setTeamALoss['teamB'].map(OOWP)
+
+full_set = pd.concat([setTeamAWin, setTeamALoss], ignore_index=True)
+
+full_set.to_csv('2015-reg-season-data.csv', index=False)
