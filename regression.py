@@ -3,6 +3,7 @@ from numpy import loadtxt, zeros, ones, array, linspace, logspace, mean, std, ar
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from pylab import plot, show, xlabel, ylabel
+import numpy as np
 
 #Evaluate the linear regression
 
@@ -74,28 +75,28 @@ def gradient_descent(X, y, theta, alpha, num_iters):
     return theta, J_history
 
 #Load the dataset
-data = loadtxt('training_data.csv', delimiter=',')
+data = loadtxt('training.txt', delimiter=',')
 
 #Plot the data
-
+'''
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 n = 100
-for c, m, zl, zh in [('r', 'o', -50, -25),('b', '^', -30, -5)]:
+for c, m, zl, zh in [('r', 'o', -50, -25)]:
     xs = data[:, 0]
     ys = data[:, 1]
     zs = data[:, 2]
-    cs = data[: ,3]
-    ax.scatter(xs, ys, zs, cs, marker=m)
+    cs = data[:, 3]
+    ax.scatter(xs, ys, zs, c=cs, marker=m)
 ax.set_xlabel('WPdiff')
 ax.set_ylabel('OWPdiff')
 ax.set_zlabel('OOWPdiff')
 plt.show()
+'''
 
 # this means the right most column of data is the result label
-numOfFeaturesPlusOne = len(data[0]) - 1
-X = data[:, : numOfFeaturesPlusOne]
-y = data[:, numOfFeaturesPlusOne]
+X = data[:, : 3]
+y = data[:, 3]
 
 #number of training samples
 m = y.size
@@ -106,19 +107,43 @@ y.shape = (m, 1)
 x, mean_r, std_r = feature_normalize(X)
 
 #Add a column of ones to X (interception data)
-it = ones(shape=(m, numOfFeaturesPlusOne))
-it[:, 1: numOfFeaturesPlusOne] = x
+it = ones(shape=(m, 4))
+it[:, 1: 4] = x
 
 #Some gradient descent settings
-iterations = 100000
-alpha = 0.0001
+# We decided that 10000 iterations and 0.001 alpha is optimal
+iterations = 10000
+alpha = 0.001
 
 #Init Theta and Run Gradient Descent
-theta = zeros(shape=(numOfFeaturesPlusOne, 1))
+theta = zeros(shape=(4, 1))
 
 theta, J_history = gradient_descent(it, y, theta, alpha, iterations)
+'''
 plot(arange(iterations), J_history)
 xlabel('Iterations')
 ylabel('Cost Function')
 show()
+'''
+
 print(theta)
+
+data2 = loadtxt('test.txt', delimiter=',')
+testX = data2[:,2:5] # column 2 to 4
+
+accum = 0
+for i in range(len(testX)):
+    arr = zeros(shape=(1, 4))
+    arr[0][0] = 1.0
+    for j in range(1,4):
+        arr[0][j] = (testX[i][j-1] - mean_r[j-1]) / std_r[j-1]
+    prob = arr.dot(theta)
+    # print(arr,prob)
+
+    if prob >= 0.5:
+        prob = 1
+    else:
+        prob = 0
+
+    accum += prob
+print("accuracy: ", accum / len(testX))

@@ -44,6 +44,7 @@ for i in range(1101, 1465):
 
 regularSeason = regularSeason[regularSeason.Season >= startYear]
 regularSeason = regularSeason[regularSeason.Season <= endYear]
+tourney = tourney[tourney.Season == endYear]
 
 for _, row in regularSeason.iterrows():
     winLoc   = row["Wloc"]
