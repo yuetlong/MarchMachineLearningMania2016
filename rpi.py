@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 import pandas as pd
+import sys
 from random import random
+
+startYear = 0
+endYear = 0
+
+if len(sys.argv) < 2:
+    print("USAGE: python rpi.py [year]\n        python rpi.py [startYear] [endYear]")
+    print("       include 1 number to use data from just that year. Use 2 numbers for an inclusive range.")
+ if len(sys.args) == 2:
+    startYear = int(sys.argv[1])
+    endYear = int(sys.argv[1])
+ else:
+    startYear = int(sys.argv[1])
+    endYear = int(sys.argv[2])
 
 regularSeason = pd.read_csv('data/RegularSeasonDetailedResults.csv')
 teams = pd.read_csv('data/Teams.csv')
@@ -27,7 +41,8 @@ for i in range(1101, 1465):
         otherTeamsPossibleWinningPoints[i][j] = 0
         otherTeamsWinningPoints[i][j] = 0
 
-regularSeason = regularSeason[regularSeason.Season == 2015]
+regularSeason = regularSeason[regularSeason.Season >= startYear]
+regularSeason = regularSeason[regularSeason.Season <= endYear]
 
 for _, row in regularSeason.iterrows():
     winLoc   = row["Wloc"]
