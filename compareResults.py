@@ -1,4 +1,6 @@
 
+# Note: this requires 'predictions.csv' to have the same order as TourneyCompactResults or this script does nobody any good
+
 import pandas as pd 
 import scipy as sp
 
@@ -13,12 +15,14 @@ results['Wteam'] = pd.to_numeric(results['Wteam'])
 results['Lteam'] = pd.to_numeric(results['Lteam'])
 results['actual'] = 0
 
+# Kaggle counts a '1' if, numerically, the winning team is less than the losing team, else '0'
 for index,row in results.iterrows(): 
 	if results.Wteam[i] < results.Lteam[i]: 
 		results.actual[i] = 1
 	else: 
 		results.actual[i] = 0
 
+# Compute LogLoss with the recently made actuals and the predictions from the input csv
 epsilon = 1e-15
 pred = sp.maximum(epsilon, preds.pred)
 pred = sp.minimum(1-epsilon, preds.pred)
