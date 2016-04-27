@@ -9,10 +9,10 @@ endYear = 0
 if len(sys.argv) < 2:
     print("USAGE: python rpi.py [year]\n        python rpi.py [startYear] [endYear]")
     print("       include 1 number to use data from just that year. Use 2 numbers for an inclusive range.")
- if len(sys.args) == 2:
+if len(sys.argv) == 2:
     startYear = int(sys.argv[1])
     endYear = int(sys.argv[1])
- else:
+else:
     startYear = int(sys.argv[1])
     endYear = int(sys.argv[2])
 
@@ -196,3 +196,7 @@ full_set['OWPDiff'] = full_set['AOWP'] - full_set['BOWP']
 full_set['OOWPDiff'] = full_set['AOOWP'] - full_set['BOOWP']
 
 full_set.to_csv('training.csv', index=False)
+text_file = open("training.txt", "w")
+for _, row in full_set.iterrows():
+    text_file.write("{},{},{},{}\n".format(row["WPDiff"], row["OWPDiff"], row["OOWPDiff"], row["teamAWin"]))
+text_file.close()
