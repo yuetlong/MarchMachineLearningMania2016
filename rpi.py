@@ -18,6 +18,7 @@ else:
 
 regularSeason = pd.read_csv('data/RegularSeasonDetailedResults.csv')
 teams = pd.read_csv('data/Teams.csv')
+tourney = pd.read_csv('data/TourneyDetailedResults.csv')
 
 winningPoints = {}
 possibleWinningPoints = {}
@@ -196,7 +197,14 @@ full_set['OWPDiff'] = full_set['AOWP'] - full_set['BOWP']
 full_set['OOWPDiff'] = full_set['AOOWP'] - full_set['BOOWP']
 
 full_set.to_csv('training.csv', index=False)
-text_file = open("training.txt", "w")
+
+trainingFile = open("training.txt", "w")
+testFile = open("test.txt", "w")
 for _, row in full_set.iterrows():
-    text_file.write("{},{},{},{}\n".format(row["WPDiff"], row["OWPDiff"], row["OOWPDiff"], row["teamAWin"]))
-text_file.close()
+    trainingFile.write("{},{},{},{}\n".format(row["WPDiff"], row["OWPDiff"], row["OOWPDiff"], row["teamAWin"]))
+for _, row in tourney.iterrows():
+    w = row["Wteam"]
+    l = row["Lteam"]
+    testFile.write("{},{},{},{},{}\n".format(w, l, WP[w] - WP[l], OWP[w] - OWP[l], OOWP[w] - OOWP[l]))
+trainingFile.close()
+testFile.close()
