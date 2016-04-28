@@ -200,12 +200,40 @@ full_set['OOWPDiff'] = full_set['AOOWP'] - full_set['BOOWP']
 full_set.to_csv('training.csv', index=False)
 
 trainingFile = open("training.txt", "w")
-testFile = open("test.txt", "w")
 for _, row in full_set.iterrows():
     trainingFile.write("{},{},{},{}\n".format(row["WPDiff"], row["OWPDiff"], row["OOWPDiff"], row["teamAWin"]))
+trainingFile.close()
+
+'''
 for _, row in tourney.iterrows():
     w = row["Wteam"]
     l = row["Lteam"]
     testFile.write("{},{},{},{},{}\n".format(w, l, WP[w] - WP[l], OWP[w] - OWP[l], OOWP[w] - OOWP[l]))
 trainingFile.close()
 testFile.close()
+'''
+
+sampleSubmissions = pd.read_csv('data/SampleSubmission.csv')
+temp = sampleSubmissions['Id'].str.split('_',expand=True)
+temp.rename(columns={0: "Season", 1: "Wteam", 2:"Lteam"}, inplace=True)
+temp['WP'] = temp['Wteam']
+temp['OWP'] = temp['Wteam']
+temp['OOWP'] = temp['Wteam']
+temp.Wteam = pd.to_numeric(temp.Wteam)
+temp.Lteam = pd.to_numeric(temp.Lteam)
+temp.WP = pd.to_numeric(temp.WP)
+temp.OWP = pd.to_numeric(temp.OWP)
+temp.OOWP = pd.to_numeric(temp.OOWP)
+
+for i,r in temp.iterrows():
+    w = temp.Wteam[i]
+    l = temp.Lteam[i]
+    temp.ix[i, 'WP'] = WP[w] - WP[l]
+    temp.ix[i, 'OWP'] = OWP[w] - OWP[l]
+    temp.ix[i, 'OOWP'] = OOWP[w] - OOWP[l]
+    #temp.set_value(i, 3, WP[w] - WP[l],takeable=True)
+    #temp.set_value(i, 4, OWP[w] - OWP[l],takeable=True)
+    #temp.set_value(i, 5, OOWP[w] - OOWP[l],takeable=True)
+
+
+temp.to_csv('testfile.csv', index=False)

@@ -132,6 +132,7 @@ data2 = loadtxt('test.txt', delimiter=',')
 testX = data2[:,2:5] # column 2 to 4
 
 accum = 0
+rightPrediction = 0
 for i in range(len(testX)):
     arr = zeros(shape=(1, 4))
     arr[0][0] = 1.0
@@ -140,10 +141,14 @@ for i in range(len(testX)):
     prob = arr.dot(theta)
     # print(arr,prob)
 
-    if prob >= 0.5:
+    if prob > 1:
         prob = 1
-    else:
+    elif prob < 0:
         prob = 0
+
+    if prob >= 0.5:
+        rightPrediction += 1
 
     accum += prob
 print("accuracy: ", accum / len(testX))
+print("right predictions : ", rightPrediction, "/", len(testX))
