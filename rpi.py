@@ -216,24 +216,23 @@ testFile.close()
 sampleSubmissions = pd.read_csv('data/SampleSubmission.csv')
 temp = sampleSubmissions['Id'].str.split('_',expand=True)
 temp.rename(columns={0: "Season", 1: "Wteam", 2:"Lteam"}, inplace=True)
-temp['WP'] = temp['Wteam']
-temp['OWP'] = temp['Wteam']
-temp['OOWP'] = temp['Wteam']
+temp['WPdiff'] = temp['Wteam']
+temp['OWPdiff'] = temp['Wteam']
+temp['OOWPdiff'] = temp['Wteam']
 temp.Wteam = pd.to_numeric(temp.Wteam)
 temp.Lteam = pd.to_numeric(temp.Lteam)
-temp.WP = pd.to_numeric(temp.WP)
-temp.OWP = pd.to_numeric(temp.OWP)
-temp.OOWP = pd.to_numeric(temp.OOWP)
+temp.WPdiff = pd.to_numeric(temp.WPdiff)
+temp.OWPdiff = pd.to_numeric(temp.OWPdiff)
+temp.OOWPdiff = pd.to_numeric(temp.OOWPdiff)
 
 for i,r in temp.iterrows():
     w = temp.Wteam[i]
     l = temp.Lteam[i]
-    temp.ix[i, 'WP'] = WP[w] - WP[l]
-    temp.ix[i, 'OWP'] = OWP[w] - OWP[l]
-    temp.ix[i, 'OOWP'] = OOWP[w] - OOWP[l]
+    temp.ix[i, 'WPdiff'] = WP[w] - WP[l]
+    temp.ix[i, 'OWPdiff'] = OWP[w] - OWP[l]
+    temp.ix[i, 'OOWPdiff'] = OOWP[w] - OOWP[l]
     #temp.set_value(i, 3, WP[w] - WP[l],takeable=True)
     #temp.set_value(i, 4, OWP[w] - OWP[l],takeable=True)
     #temp.set_value(i, 5, OOWP[w] - OOWP[l],takeable=True)
-
 
 temp.to_csv('testfile.csv', index=False)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from numpy import loadtxt, zeros, ones, array, linspace, logspace, mean, std, arange
+import pandas as pd
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 from pylab import plot, show, xlabel, ylabel
@@ -74,11 +75,11 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 
     return theta, J_history
 
-#Load the dataset
+#Load the training dataset
 data = loadtxt('training.txt', delimiter=',')
 
 #Plot the data
-'''
+
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 n = 100
@@ -92,7 +93,7 @@ ax.set_xlabel('WPdiff')
 ax.set_ylabel('OWPdiff')
 ax.set_zlabel('OOWPdiff')
 plt.show()
-'''
+
 
 # this means the right most column of data is the result label
 X = data[:, : 3]
@@ -128,19 +129,35 @@ show()
 
 print(theta)
 
-data2 = loadtxt('test.txt', delimiter=',')
-testX = data2[:,2:5] # column 2 to 4
+submissions = pd.read_csv('testfile.csv')
 
-accum = 0
-rightPrediction = 0
+#testX = data2[:,2:5] # column 2 to 4
+testX = submissions.ix[:,['WPdiff','OWPdiff','OOWPdiff']].values
+print(testX)
+
+#accum = 0
+#rightPrediction = 0
+
+ss = pd.read_csv('data/SampleSubmission.csv')
+
 for i in range(len(testX)):
     arr = zeros(shape=(1, 4))
     arr[0][0] = 1.0
     for j in range(1,4):
         arr[0][j] = (testX[i][j-1] - mean_r[j-1]) / std_r[j-1]
     prob = arr.dot(theta)
-    # print(arr,prob)
 
+    if prob[0][0] > 1:
+        prob[0][0] = 1
+    elif prob[0][0] < 0:
+        prob[0][0] = 0
+
+    print(arr,prob[0][0])
+    ss.ix[i,'Pred'] = prob[0][0]
+
+ss.to_csv('ourSubmission.csv', index=False)
+
+'''
     if prob > 1:
         prob = 1
     elif prob < 0:
@@ -152,3 +169,4 @@ for i in range(len(testX)):
     accum += prob
 print("accuracy: ", accum / len(testX))
 print("right predictions : ", rightPrediction, "/", len(testX))
+'''
