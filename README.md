@@ -7,3 +7,7 @@ python rpi.py 2013 2016
 ```
 python regression.py
 ```
+
+## Link to the report
+
+[Link](https://docs.google.com/document/d/1P6D-jWybdrzR11wncbzCwUdRXozuKNXIcwZWUjm6qgs/edit?usp=sharing)
