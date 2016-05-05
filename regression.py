@@ -2,7 +2,11 @@
 from numpy import loadtxt, zeros, ones, mean, std
 import pandas as pd
 
-#Evaluate the linear regression
+
+# Code for linear regression
+# We did not write these ourselves
+# Here is the source and tutorial
+# http://aimotion.blogspot.com/2011/10/machine-learning-with-python-linear.html
 
 def feature_normalize(X):
     '''
@@ -71,10 +75,12 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 
     return theta, J_history
 
+# We wrote most of the code from here
+
 #Load the training dataset
 data = loadtxt('training.txt', delimiter=',')
 
-#Plot the data, commented out for production
+#Plot the data, commented out for faster production
 '''
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
