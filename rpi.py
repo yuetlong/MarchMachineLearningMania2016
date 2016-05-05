@@ -5,10 +5,13 @@ from random import random
 
 startYear = 0
 endYear = 0
+awayFactor = 1.4
+homeFactor = 0.6
 
 if len(sys.argv) < 2:
     print("USAGE: python rpi.py [year]\n        python rpi.py [startYear] [endYear]")
     print("       include 1 number to use data from just that year. Use 2 numbers for an inclusive range.")
+
 if len(sys.argv) == 2:
     startYear = int(sys.argv[1])
     endYear = int(sys.argv[1])
@@ -53,26 +56,26 @@ for _, row in regularSeason.iterrows():
 
     if winLoc == "A":
         # WP
-        winningPoints[winTeam] += 1.4
-        possibleWinningPoints[winTeam] += 1.4
-        possibleWinningPoints[lostTeam] += 0.6
+        winningPoints[winTeam] += awayFactor
+        possibleWinningPoints[winTeam] += awayFactor
+        possibleWinningPoints[lostTeam] += homeFactor
 
         # OWP
-        otherTeamsWinningPoints[lostTeam][winTeam] -= 1.4
-        otherTeamsPossibleWinningPoints[lostTeam][winTeam] -= 1.4
-        otherTeamsPossibleWinningPoints[winTeam][lostTeam] -= 0.6
+        otherTeamsWinningPoints[lostTeam][winTeam] -= awayFactor
+        otherTeamsPossibleWinningPoints[lostTeam][winTeam] -= awayFactor
+        otherTeamsPossibleWinningPoints[winTeam][lostTeam] -= homeFactor
         # when calculating OWP for the winTeam, the the lostTeam WP excludes the matches with winTeam
 
     elif winLoc == "H":
         # WP
-        winningPoints[winTeam] += 0.6
-        possibleWinningPoints[winTeam] += 0.6
-        possibleWinningPoints[lostTeam] += 1.4
+        winningPoints[winTeam] += homeFactor
+        possibleWinningPoints[winTeam] += homeFactor
+        possibleWinningPoints[lostTeam] += awayFactor
 
         # OWP
-        otherTeamsWinningPoints[lostTeam][winTeam] -= 0.6
-        otherTeamsPossibleWinningPoints[lostTeam][winTeam] -= 0.6
-        otherTeamsPossibleWinningPoints[winTeam][lostTeam] -= 1.4
+        otherTeamsWinningPoints[lostTeam][winTeam] -= homeFactor
+        otherTeamsPossibleWinningPoints[lostTeam][winTeam] -= homeFactor
+        otherTeamsPossibleWinningPoints[winTeam][lostTeam] -= awayFactor
 
     elif winLoc == "N":
         #WP
@@ -106,10 +109,9 @@ OWP = {}
 # OWP
 for teamInQuestion in opponents:
     accum = 0
-
     for opponentTeam in opponents[teamInQuestion]:
-        accum += (winningPoints[opponentTeam] + otherTeamsWinningPoints[teamInQuestion][opponentTeam]) / (possibleWinningPoints[opponentTeam] + otherTeamsPossibleWinningPoints[teamInQuestion][opponentTeam])
-
+        accum += (winningPoints[opponentTeam] + otherTeamsWinningPoints[teamInQuestion][opponentTeam]) \
+                 / (possibleWinningPoints[opponentTeam] + otherTeamsPossibleWinningPoints[teamInQuestion][opponentTeam])
     if len(opponents[teamInQuestion]) > 0:
         OWP[teamInQuestion] = accum / len(opponents[teamInQuestion])
     else:
@@ -122,7 +124,6 @@ for teamInQuestion in opponents:
     accum = 0
     for opponentTeam in opponents[teamInQuestion]:
         accum += OWP[opponentTeam]
-
     if len(opponents[teamInQuestion]) > 0:
         OOWP[teamInQuestion] = accum / len(opponents[teamInQuestion])
     else:
@@ -133,8 +134,8 @@ teams["WP"] = 0
 teams["OWP"] = 0
 teams["OOWP"] = 0
 
-teams['WP'] = teams['Team_Id'].map(WP)
-teams['OWP'] = teams['Team_Id'].map(OWP)
+teams['WP']   = teams['Team_Id'].map(WP)
+teams['OWP']  = teams['Team_Id'].map(OWP)
 teams['OOWP'] = teams['Team_Id'].map(OOWP)
     
 teams.to_csv('teams_with_rpi.csv', index=False)
@@ -204,15 +205,6 @@ for _, row in full_set.iterrows():
     trainingFile.write("{},{},{},{}\n".format(row["WPDiff"], row["OWPDiff"], row["OOWPDiff"], row["teamAWin"]))
 trainingFile.close()
 
-'''
-for _, row in tourney.iterrows():
-    w = row["Wteam"]
-    l = row["Lteam"]
-    testFile.write("{},{},{},{},{}\n".format(w, l, WP[w] - WP[l], OWP[w] - OWP[l], OOWP[w] - OOWP[l]))
-trainingFile.close()
-testFile.close()
-'''
-
 sampleSubmissions = pd.read_csv('data/SampleSubmission.csv')
 temp = sampleSubmissions['Id'].str.split('_',expand=True)
 temp.rename(columns={0: "Season", 1: "Wteam", 2:"Lteam"}, inplace=True)
@@ -231,8 +223,5 @@ for i,r in temp.iterrows():
     temp.ix[i, 'WPdiff'] = WP[w] - WP[l]
     temp.ix[i, 'OWPdiff'] = OWP[w] - OWP[l]
     temp.ix[i, 'OOWPdiff'] = OOWP[w] - OOWP[l]
-    #temp.set_value(i, 3, WP[w] - WP[l],takeable=True)
-    #temp.set_value(i, 4, OWP[w] - OWP[l],takeable=True)
-    #temp.set_value(i, 5, OOWP[w] - OOWP[l],takeable=True)
 
 temp.to_csv('testfile.csv', index=False)

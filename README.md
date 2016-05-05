@@ -1,9 +1,9 @@
-# MarchMachineLearningMania
+## To prepare for the training data
+```
+python rpi.py 2013 2016
+```
 
-https://www.kaggle.com/c/march-machine-learning-mania-2016/
-
-via 
-
-https://sites.google.com/site/umlcsmachinelearningspring2016/
-
-Machine Learning is hard
+## To train the data and return output (ourSubmission.csv)
+```
+python regression.py
+```

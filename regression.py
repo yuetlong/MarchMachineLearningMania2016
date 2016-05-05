@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-from numpy import loadtxt, zeros, ones, array, linspace, logspace, mean, std, arange
+from numpy import loadtxt, zeros, ones, mean, std
 import pandas as pd
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from pylab import plot, show, xlabel, ylabel
-import numpy as np
 
 #Evaluate the linear regression
 
@@ -78,8 +74,8 @@ def gradient_descent(X, y, theta, alpha, num_iters):
 #Load the training dataset
 data = loadtxt('training.txt', delimiter=',')
 
-#Plot the data
-
+#Plot the data, commented out for production
+'''
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 n = 100
@@ -93,7 +89,7 @@ ax.set_xlabel('WPdiff')
 ax.set_ylabel('OWPdiff')
 ax.set_zlabel('OOWPdiff')
 plt.show()
-
+'''
 
 # this means the right most column of data is the result label
 X = data[:, : 3]
@@ -120,6 +116,7 @@ alpha = 0.001
 theta = zeros(shape=(4, 1))
 
 theta, J_history = gradient_descent(it, y, theta, alpha, iterations)
+
 '''
 plot(arange(iterations), J_history)
 xlabel('Iterations')
@@ -131,12 +128,7 @@ print(theta)
 
 submissions = pd.read_csv('testfile.csv')
 
-#testX = data2[:,2:5] # column 2 to 4
 testX = submissions.ix[:,['WPdiff','OWPdiff','OOWPdiff']].values
-print(testX)
-
-#accum = 0
-#rightPrediction = 0
 
 ss = pd.read_csv('data/SampleSubmission.csv')
 
@@ -156,17 +148,3 @@ for i in range(len(testX)):
     ss.ix[i,'Pred'] = prob[0][0]
 
 ss.to_csv('ourSubmission.csv', index=False)
-
-'''
-    if prob > 1:
-        prob = 1
-    elif prob < 0:
-        prob = 0
-
-    if prob >= 0.5:
-        rightPrediction += 1
-
-    accum += prob
-print("accuracy: ", accum / len(testX))
-print("right predictions : ", rightPrediction, "/", len(testX))
-'''
